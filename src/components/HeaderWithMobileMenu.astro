@@ -1,0 +1,32 @@
+---
+import Header from "./Header.astro";
+import MobileMenu from "./MobileMenu.astro";
+---
+
+<div>
+    <Header />
+    <MobileMenu />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const menuIcon = document.getElementById("menu-icon");
+            const mobileMenu = document.getElementById("mobile-menu");
+
+            menuIcon.addEventListener("click", function () {
+                menuIcon.classList.toggle("open");
+
+                if (
+                    mobileMenu.style.transform === "" ||
+                    mobileMenu.style.transform === "translateX(-100%)"
+                ) {
+                    mobileMenu.style.transform = "translateX(0)";
+                    mobileMenu.style.transition =
+                        "transform 0.3s ease-in-out, opacity 0.3s ease-in-out";
+                    mobileMenu.style.opacity = "1";
+                } else {
+                    mobileMenu.style.transform = "translateX(-100%)";
+                    mobileMenu.style.opacity = "0";
+                }
+            });
+        });
+    </script>
+</div>

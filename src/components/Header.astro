@@ -1,0 +1,238 @@
+---
+import SearchForm from "./SearchForm.astro";
+import DropdownMenu from "./DropdownMenu.astro";
+import CartIcon from "./CartIcon.astro";
+import ShoppingCart from "./ShoppingCart.astro";
+import UserMenuDesktop from "./UserMenuDesktop.astro";
+import UserMenuMobile from "./UserMenuMobile.astro";
+---
+
+<header
+    class="py-4 px-10 flex items-center fixed top-0 w-full justify-between border-b-2 border-gray-200 shadow-md bg-white z-10"
+>
+    <div class="lg:hidden cursor-pointer menu-icon" id="menu-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="flex flex-grow basis-0 lg:justify-start justify-center">
+        <a href="/">
+            <img src="/images/logo.svg" alt="Lix" class="h-6 w-28" />
+        </a>
+    </div>
+    <nav class="hidden lg:flex">
+        <ul class="flex text-sm [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2">
+            <li class="group nav-item">
+                <a class="font-bold">HOMBRE</a>
+            </li>
+            <li class="group nav-item">
+                <a href="#" class="font-bold">MUJER</a>
+            </li>
+        </ul>
+    </nav>
+    <DropdownMenu />
+    <nav class="hidden lg:flex flex-grow justify-end basis-0 items-center">
+        <ul class="flex items-center space-x-4">
+            <SearchForm />
+            <UserMenuDesktop />
+            <CartIcon />
+        </ul>
+    </nav>
+    <ShoppingCart />
+    <!-- Vistas de móvil -->
+    <div class="flex lg:hidden items-center ml-auto mr-[-16px]">
+        <UserMenuMobile />
+    </div>
+</header>
+<style>
+    .menu-icon {
+        width: 30px;
+        height: 22px;
+        margin-left: -25px;
+        position: relative;
+        transform: rotate(0deg);
+        transition: 0.5s ease-in-out;
+        cursor: pointer;
+    }
+
+    .menu-icon span {
+        display: block;
+        position: absolute;
+        height: 3px;
+        width: 100%;
+        background: #333;
+        border-radius: 9px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: 0.25s ease-in-out;
+    }
+
+    .menu-icon span:nth-child(1) {
+        top: 0px;
+        transform-origin: left center;
+    }
+
+    .menu-icon span:nth-child(2) {
+        top: 9px;
+        transform-origin: left center;
+    }
+
+    .menu-icon span:nth-child(3) {
+        top: 18px;
+        transform-origin: left center;
+    }
+
+    .menu-icon.open span:nth-child(1) {
+        transform: rotate(45deg);
+        top: -3px;
+    }
+
+    .menu-icon.open span:nth-child(2) {
+        width: 0%;
+        opacity: 0;
+    }
+
+    .menu-icon.open span:nth-child(3) {
+        transform: rotate(-45deg);
+        top: 23px;
+    }
+
+    .nav-item:hover a,
+    .nav-item a.underline {
+        text-decoration: underline;
+        text-decoration-thickness: 2px; /* Puedes ajustar el grosor del subrayado según tu preferencia */
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const hombre = document.querySelector(".nav-item:nth-child(1)");
+        const mujer = document.querySelector(".nav-item:nth-child(2)");
+        const menuHombre = document.getElementById("menu-hombre");
+        const menuMujer = document.getElementById("menu-mujer");
+        let timeout;
+
+        function hideMenus() {
+            menuHombre.style.display = "none";
+            menuMujer.style.display = "none";
+            removeUnderlineNavItem(hombre);
+            removeUnderlineNavItem(mujer);
+        }
+
+        function showMenu(menu, navItem) {
+            clearTimeout(timeout);
+            hideMenus();
+            menu.style.display = "block";
+            underlineNavItem(navItem);
+        }
+
+        function underlineNavItem(navItem) {
+            navItem.querySelector("a").classList.add("underline");
+        }
+
+        function removeUnderlineNavItem(navItem) {
+            navItem.querySelector("a").classList.remove("underline");
+        }
+
+        hombre.addEventListener("mouseenter", function () {
+            showMenu(menuHombre, hombre);
+        });
+
+        hombre.addEventListener("mouseleave", function () {
+            timeout = setTimeout(hideMenus, 300);
+        });
+
+        mujer.addEventListener("mouseenter", function () {
+            showMenu(menuMujer, mujer);
+        });
+
+        mujer.addEventListener("mouseleave", function () {
+            timeout = setTimeout(hideMenus, 300);
+        });
+
+        menuHombre.addEventListener("mouseenter", function () {
+            clearTimeout(timeout);
+            underlineNavItem(hombre);
+        });
+
+        menuHombre.addEventListener("mouseleave", function () {
+            hideMenus();
+        });
+
+        menuMujer.addEventListener("mouseenter", function () {
+            clearTimeout(timeout);
+            underlineNavItem(mujer);
+        });
+
+        menuMujer.addEventListener("mouseleave", function () {
+            hideMenus();
+        });
+    });
+    document.addEventListener("DOMContentLoaded", (event) => {
+        const cartIcon = document.querySelector(
+            '[aria-label="Carrito de Compras"]',
+        );
+        const cartSlide = document.getElementById("shopping-cart");
+        const overlay = document.getElementById("overlay");
+
+        const closeButton = document.querySelector(
+            '[aria-labelledby="slide-over-title"] button',
+        );
+        const continueShoppingBtn =
+            document.getElementById("continue-shopping");
+
+        // Evento de clic para el icono del carrito.
+        cartIcon?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (cartSlide && overlay) {
+                overlay.style.transition = "none"; // Remover cualquier transición al abrir
+                overlay.style.opacity = "0.6"; // Aparecer de inmediato
+                overlay.style.pointerEvents = "auto";
+                cartSlide.style.display = "block";
+
+                void cartSlide.offsetWidth; // Reflow
+                cartSlide.classList.remove("translate-x-full"); // Iniciar animación del slide
+                window.loadCartProducts();
+            }
+        });
+
+        // Función para cerrar el panel y el overlay
+        function closePanel() {
+            if (cartSlide && overlay) {
+                cartSlide.style.transition = "transform 700ms ease-out";
+                overlay.style.transition = ""; // Restaurar transición al cerrar
+                overlay.classList.add("transition-opacity", "duration-700");
+                cartSlide.classList.add("translate-x-full");
+                overlay.style.opacity = "0";
+                setTimeout(() => {
+                    cartSlide.style.display = "none";
+                    overlay.style.pointerEvents = "none";
+                }, 700); // Ajusta el valor para que sea igual o superior al tiempo de duración de tu transición.
+            }
+        }
+        // Evento de clic para el botón de cerrar.
+        closeButton?.addEventListener("click", closePanel);
+        // Evento de clic para el overlay.
+        overlay?.addEventListener("click", closePanel);
+        // Evento de clic para el botón de continuar comprando.
+        continueShoppingBtn?.addEventListener("click", closePanel);
+
+        // Evento de clic para el body.
+        document.body.addEventListener("click", (e) => {
+            if (cartSlide && cartSlide.style.display === "block") {
+                if (
+                    !cartSlide.contains(e.target as Node) && // Si el clic no fue dentro del slide
+                    !cartIcon.contains(e.target as Node) && // Si el clic no fue en el icono del carrito
+                    !overlay.contains(e.target as Node) // Si el clic no fue en el overlay
+                ) {
+                    closePanel(); // Cerrar panel
+                }
+            }
+        });
+
+        // Detiene la propagación del evento de clic dentro del carrito para evitar que se cierre inesperadamente.
+        cartSlide?.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
+    });
+</script>

@@ -1,0 +1,759 @@
+---
+const sizes = ['28', '30', '32', '34', '36', '38', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const colors = ['purple', 'gray', 'blue', 'black', 'yellow', 'white', 'cream', 'pink', 'green', 'red', 'brown', 'orange'];
+const types = ['Camisetas', 'Camisas', 'Jeans', 'Pantalones', 'Shorts', 'Bermudas'];
+---
+<body class="bg-gray-100">
+  <div class="flex flex-col md:flex-row items-start px-4 py-4">
+    <di class="w-full md:w-1/6 p-4 bg-white rounded shadow mr-4">
+      <h1 class="text-xl font-semibold mb-4">Filtrar/Ordenar</h1>
+
+        <div class="mb-4">
+          <label for="customNumber" class="block mb-2 font-semibold">Rango de precios</label>
+          <div class="flex items-center">
+            <button id="decrease" class="px-3 py-1 border bg-gray-300 rounded-l-md">-</button>
+            <input type="text" id="customNumber" value="COP 0" readonly class="w-32 text-center border-t border-b">
+            <button id="increase" class="px-3 py-1 border bg-gray-300 rounded-r-md">+</button>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <span class="block font-semibold mb-2">Categorías</span>
+          <div>
+            {types.map(type => (
+              <label class="flex items-center mb-2 cursor-pointer">
+                <input type="checkbox" name="type" value={type} class="form-checkbox text-blue-500 h-5 w-5" />
+                <span class="ml-2">{type}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div class="mb-4 -m-2">
+          <label class="block font-semibold mb-2 w-full">Talla</label>
+          <div class="scroll-container">
+            <div class="size-container">
+              {sizes.map(size => (
+                <span class="m-2 inline-flex items-center justify-center h-10 w-10 rounded-full size-circle non-selectable" data-size={size}>
+                  {size}
+                </span>
+              ))}                                        
+            </div>
+          </div>          
+        </div>
+        <div class="mb-4 flex flex-wrap -m-2">
+          <label class="block font-semibold mb-2 w-full">Color</label>
+          <div class="grid grid-cols-4 gap-2">
+          {colors.map(color => {
+            const bgColorClass = {
+              red: "bg-red-600 border border-gray-300",
+              blue: "bg-blue-600 border border-gray-300",
+              orange: "bg-orange-400 border border-gray-300",
+              green: "bg-green-600 border border-gray-300",
+              black: "bg-black border border-gray-300",
+              purple: "bg-purple-400 border border-gray-300",
+              yellow: "bg-yellow-300 border border-gray-300",
+              brown: "bg-brown-custom border border-gray-300",
+              white: "bg-white border border-gray-300",
+              gray: "bg-gray-500 border border-gray-300",
+              pink: "bg-pink-300 border border-gray-300",
+              cream: "bg-custom-crema border border-gray-300"
+            }[color];
+            return (
+              <span class={`color-circle inline-flex items-center justify-center rounded-full ${bgColorClass}`} data-color={color}></span>
+            );
+          })}
+          </div>
+        </div>                     
+    </div>
+    <div class="w-full md:flex-1 p-3">
+      <section>
+        <header class="border-b border-gray-300 pb-4 flex justify-between items-center">
+          <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">Todos los productos</h1>
+          <h1 id="productCount" class="text-xl font-bold text-gray-900 sm:text-2xl"></h1>
+        </header>
+      
+        <ul id="productList" class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Los productos se insertarán aquí dinámicamente por JavaScript -->
+        </ul>
+      
+        <ol id="pagination" class="mt-8 flex justify-center gap-1 text-xs font-medium">
+          <!-- Los botones de paginación se insertarán aquí dinámicamente por JavaScript -->
+        </ol>
+      </section>
+    </div>
+  </div>
+</body>
+<style>
+  .bg-custom-crema {
+    background-color: #FFF5E1; /* Color crema */
+  }
+  .bg-brown-custom {
+    background-color: #8B4513; /* o cualquier color marrón que prefieras */
+  }
+  .scroll-container {
+    width: 80%;
+    height: 120px;
+    position: relative;
+  }
+  .size-container {
+    height: 100%;
+    overflow-y: scroll;
+    display: grid;
+    grid-template-columns: repeat(3, 32px);
+    grid-gap: 10px 10px;
+  }
+  .size-container::before {
+    content: '\f106';  /* Código Unicode para la flecha hacia arriba de Font Awesome */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;  /* Es necesario para que el ícono se muestre correctamente */
+    position: absolute;
+    top: -26px;  /* Ajusta según tu necesidad */
+    right: -2px;
+    font-size: 20px;  /* Ajusta el tamaño del ícono aquí */
+    color: #d1d1d1;  /* Color del ícono */
+    z-index: 1;
+  }
+  .size-container::-webkit-scrollbar {
+    width: 10px;
+  }
+  .size-container::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 5px; /* Bordes redondeados para el track */
+    border: 1px solid #e6e6e6; /* Trazo gris claro para el track */
+  }
+  .size-container::-webkit-scrollbar-thumb {
+    background-color: #d1d1d1;
+    border-radius: 5px;
+  }
+  .size-container::-webkit-scrollbar-thumb:hover {
+    background-color: #b3b3b3;
+  }
+  .size-container::-webkit-scrollbar-button {
+    display: none;
+  }
+  .size-circle {
+    border: 2px solid #add8e6;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.8em;
+    margin: 0;
+  }
+  .non-selectable {
+    user-select: none;
+  }
+  .selected-size {
+    background-color: #add8e6;
+    color: white;
+  }
+  .color-circle {
+    height: 32px;
+    width: 32px;
+  }
+  .selected-color {
+    /* Estilos para el círculo de color cuando está seleccionado */
+    border: 3px solid #add8e6; /* Por ejemplo, un borde más grueso o un cambio de color */
+  }
+  input[type='checkbox'] {
+    appearance: none; /* Elimina el aspecto predeterminado del checkbox */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 1.5em; /* Especifica un tamaño personalizado para el checkbox */
+    height: 1.5em;
+    bottom: 1px;
+    border: 2px solid #add8e6; /* Borde azul pastel */
+    border-radius: 50%; /* Hace que el borde sea circular */
+    outline: none; /* Elimina el contorno/foco predeterminado */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el checkbox */
+    position: relative; /* Necesario para posicionar correctamente el pseudo-elemento */
+  }
+
+  input[type='checkbox']:hover::after, /* Nuevo estilo para hover */
+  input[type='checkbox']:checked::after {
+      content: ''; /* Necesario para que el pseudo-elemento se muestre */
+      position: absolute;
+      top: 4px; /* Ajuste para centrar el pseudo-elemento dentro del checkbox */
+      left: 4px;
+      width: calc(100% - 8px); /* Ajusta el tamaño para que encaje dentro del checkbox */
+      height: calc(100% - 8px);
+      border-radius: 50%; 
+      background: #add8e6; /* Color azul pastel de fondo para el checkbox seleccionado */
+  }
+</style>
+<script>
+  // Asegúrate de que 'types' esté disponible en este ámbito
+  const types = ['Camisetas', 'Camisas', 'Jeans', 'Pantalones', 'Shorts', 'Bermudas'];
+
+  type Product = {
+    id: string;
+    href: string;
+    imgSrc: string;
+    title: string;
+    price: string;
+    category: string;
+    oldPrice?: string;
+  };
+  declare global {
+    interface Window {
+      renderProducts: (filteredProducts?: Product[]) => void;
+      updateSelectedCategories: (category: string) => void;
+      selectedCategories: string[];
+      currentPrice: number;
+      currentPage: number;
+    }
+  }
+
+  // Inicializa selectedCategories como un arreglo vacío al inicio
+  window.selectedCategories = [];
+
+  // Define la función updateSelectedCategories
+  window.updateSelectedCategories = function(category) {
+      let newSelectedCategories = [...window.selectedCategories];
+
+      if (newSelectedCategories.includes(category)) {
+        newSelectedCategories = newSelectedCategories.filter(c => c !== category);
+      } else {
+        newSelectedCategories.push(category);
+      }
+
+      if (haveFiltersChanged(newSelectedCategories, window.currentPrice, window.currentPrice)) {
+        currentPage = 1;
+        window.selectedCategories = newSelectedCategories;
+        window.renderProducts();
+      }
+  };
+
+  // Asigna esta función a los checkbox de categoría en el DOMContentLoaded
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('input[name="type"]').forEach(function(input) {
+        input.addEventListener('change', function(event) {
+            // Asegúrate de que event.target sea tratado como un HTMLInputElement
+            const target = event.target as HTMLInputElement;
+
+            if (target && target.value) {
+                const category = target.value;
+                window.updateSelectedCategories(category);
+            }
+        });
+    });
+  });
+  
+  let selectedSizes = []; // Arreglo para almacenar las tallas seleccionadas
+
+  document.querySelectorAll('.size-circle').forEach(element => {
+    element.addEventListener('click', () => {
+      const size = element.getAttribute('data-size');
+
+      // Verifica si la talla ya está seleccionada
+      const isSelected = selectedSizes.includes(size);
+      if (isSelected) {
+        // Deseleccionar la talla
+        selectedSizes = selectedSizes.filter(s => s !== size);
+        element.classList.remove('selected-size');
+      } else {
+        // Seleccionar la talla
+        selectedSizes.push(size);
+        element.classList.add('selected-size');
+      }
+
+      // Filtra los productos basado en las tallas seleccionadas
+      handleSizeSelection();
+    });
+  });
+
+  function handleSizeSelection() {
+    const productIds = products.map(product => product.id);
+
+    // Si no hay tallas seleccionadas, muestra todos los productos
+    if (selectedSizes.length === 0) {
+      window.renderProducts(products);
+      return;
+    }
+
+    // Si hay tallas seleccionadas, continúa con el filtro
+    fetch('http://localhost:3001/filter/size', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: productIds, sizes: selectedSizes }),
+    })
+    .then(response => response.json())
+    .then(filteredProductIds => {
+      const filteredProducts = products.filter(product => filteredProductIds.includes(product.id));
+      currentPage = 1;
+      window.renderProducts(filteredProducts);
+    });
+  }
+
+  let selectedColors = []; // Arreglo para almacenar los colores seleccionados
+
+  document.querySelectorAll('.color-circle').forEach(element => {
+    element.addEventListener('click', () => {
+      const color = element.getAttribute('data-color'); // Asegúrate de que cada elemento tenga este atributo
+
+      const isSelected = selectedColors.includes(color);
+      if (isSelected) {
+        selectedColors = selectedColors.filter(c => c !== color);
+        element.classList.remove('selected-color'); // Agrega una clase para indicar visualmente que está seleccionado
+      } else {
+        selectedColors.push(color);
+        element.classList.add('selected-color'); // Agrega una clase para indicar visualmente que está seleccionado
+      }
+
+      // Filtra los productos basado en los colores seleccionados
+      handleColorSelection();
+    });
+  });
+
+  function handleColorSelection() {
+    const productIds = products.map(product => product.id);
+
+    // Si no hay colores seleccionados, muestra todos los productos
+    if (selectedColors.length === 0) {
+      window.renderProducts(products);
+      return;
+    }
+
+    // Si hay colores seleccionados, continúa con el filtro
+    fetch('http://localhost:3001/filter/color', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: productIds, colors: selectedColors.map(color => translateColorToSpanish(color)) }),
+    })
+    .then(response => response.json())
+    .then(filteredProductIds => {
+      const filteredProducts = products.filter(product => filteredProductIds.includes(product.id));
+      currentPage = 1;
+      window.renderProducts(filteredProducts);
+    });
+  }
+
+  function translateColorToSpanish(color) {
+    const colorTranslations = {
+      'purple': 'púrpura',
+      'gray': 'gris',
+      'blue': 'azul',
+      'black': 'negro',
+      'yellow': 'amarillo',
+      'white': 'blanco',
+      'cream': 'crema',
+      'pink': 'rosado',
+      'green': 'verde',
+      'red': 'rojo',
+      'brown': 'marrón',
+      'orange': 'naranja'
+    };
+
+    return colorTranslations[color] || color;
+  }
+
+  let currentPrice = 0;
+  let currentPage = 1;
+  let productsPerPage = 6;
+  const products = [
+    {
+      id: "Camiseta de Cuello Redondo Regular",
+      href: "/Hombre/Camisetas/Camiseta-Cuello-Redondo-Regular",
+      imgSrc: "/images/Hombres/Camisetas/Cuello Redondo/Negro/Camiseta-Cuello-Redondo-Negra.jpg",
+      title: "Camiseta de Cuello Redondo Regular",
+      price: "$19.900 COP",
+      category: "Camisetas"
+    },
+    {
+      id: "Camiseta Oversize",
+      href: "/Hombre/Camisetas/Camiseta-Oversize",
+      imgSrc: "/images/Hombres/Camisetas/Oversize/Verde/Camiseta-Oversize-Verde.jpg",
+      title: "Camiseta Oversize",
+      price: "$49.950 COP",
+      category: "Camisetas"
+    },
+    {
+      id: "Camisa Guayabera Cubana",
+      href: "/Hombre/Camisas/Camisa-Guayabera-Cubana",
+      imgSrc: "/images/Hombres/Camisas/Camisa-Guayabera-Cubana.jpg",
+      title: "Camisa Guayabera Cubana",
+      price: "$96.000 COP",
+      oldPrice: "$120.000 COP",
+      category: "Camisas"
+    },
+    {
+      id: "Camisa Manga Corta Estampada Casual",
+      href: "/Hombre/Camisas/Camisa-Manga-Corta-Estampada-Casual",
+      imgSrc: "/images/Hombres/Camisas/Camisa-Manga-Corta.jpg",
+      title: "Camisa Manga Corta Estampada Casual",
+      price: "$67.689 COP",
+      category: "Camisas"
+    },
+    {
+      id: "Jeans Clásico de Corte Holgado",
+      href: "/Hombre/Jeans/Jeans-Clásico-de-Corte-Holgado",
+      imgSrc: "/images/Hombres/Jeans/Jeans-Lightweight-Para-Hombre.jpg",
+      title: "Jeans Clásico de Corte Holgado",
+      price: "$85.499 COP",
+      category: "Jeans"
+    },
+    {
+      id: "Jeans Skinny sin Rotos",
+      href: "/Hombre/Jeans/Jeans-Skinny-sin-Rotos",
+      imgSrc: "/images/Hombres/Jeans/Jeans-Skinny.jpg",
+      title: "Jeans Skinny sin Rotos",
+      price: "$81.920 COP",
+      category: "Jeans"
+    },
+    {
+      id: "Pantalones Elásticos y Ajustados",
+      href: "/Hombre/Pantalones/Pantalones-Elásticos-y-Ajustados",
+      imgSrc: "/images/Hombres/Pantalones/Pantalón.jpg",
+      title: "Pantalones Elásticos y Ajustados",
+      price: "$90.900 COP",
+      category: "Pantalones"
+    },
+    {
+      id: "Pantalón Cargo",
+      href: "/Hombre/Pantalones/Pantalón-Cargo",
+      imgSrc: "/images/Hombres/Pantalones/Pantalón-Cargo.jpg",
+      title: "Pantalón Cargo",
+      price: "$97.900 COP",
+      category: "Pantalones"
+    },
+    {
+      id: "Short Playero con Estampado",
+      href: "/Hombre/Shorts/Short-Playero-con-Estampado",
+      imgSrc: "/images/Hombres/Shorts/Short-Playero.jpg",
+      title: "Short Playero con Estampado",
+      price: "$51.500 COP",
+      category: "Shorts"
+    },
+    {
+      id: "Short Piscinero con Estampado",
+      href: "/Hombre/Shorts/Short-Piscinero-con-Estampado",
+      imgSrc: "/images/Hombres/Shorts/Short-Piscinero-Estampado.jpg",
+      title: "Short Piscinero con Estampado",
+      price: "$64.000 COP",
+      category: "Shorts"
+    },
+    {
+      id: "Bermuda Slim en Jean",
+      href: "/Hombre/Bermudas/Bermuda-Slim-en-Jean",
+      imgSrc: "/images/Hombres/Bermudas/Bermuda-Slim-Jean.jpg",
+      title: "Bermuda Slim en Jean",
+      price: "$68.000 COP",
+      oldPrice: "$80.000 COP",
+      category: "Bermudas"
+    },
+    {
+      id: "Bermuda en Drill Unicolor",
+      href: "/Hombre/Bermudas/Bermuda-en-Drill-Unicolor",
+      imgSrc: "/images/Hombres/Bermudas/Bermuda-Drill-Unicolor.jpg",
+      title: "Bermuda en Drill Unicolor",
+      price: "$63.000 COP",
+      oldPrice: "$90.000 COP",
+      category: "Bermudas"
+    }
+  ];
+
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const decreaseButton = document.getElementById('decrease');
+    const increaseButton = document.getElementById('increase');
+    
+    // Aquí, especificamos que 'priceInput' es un 'HTMLInputElement', no solo un 'HTMLElement' genérico.
+    const priceInput = document.getElementById('customNumber') as HTMLInputElement;
+
+    const maxPrice = 200000; // 1,000,000
+    const step = 5000; // 10,000
+
+    priceInput.addEventListener('select', (event) => {
+      // Asegúrate de que event.target sea tratado como un HTMLInputElement
+      const input = event.target instanceof HTMLInputElement ? event.target : null;
+
+      if (input) {
+        const value = input.value;
+        const copIndex = value.indexOf('COP');
+        
+        if (input.selectionStart > copIndex) {
+          // Si la selección comienza en o después de "COP", ajusta el inicio de la selección
+          input.setSelectionRange(copIndex, copIndex);
+        } else if (input.selectionEnd > copIndex) {
+          // Si la selección incluye "COP", ajusta el final de la selección
+          input.setSelectionRange(input.selectionStart, copIndex);
+        }
+      }
+    });
+
+    function updatePriceValue() {
+      const oldPrice = currentPrice;
+
+      if (currentPrice > maxPrice) {
+          currentPrice = maxPrice;
+      } else if (currentPrice < 0) {
+          currentPrice = 0;
+      }
+
+      // Actualizar el valor del input
+      priceInput.value = `${currentPrice.toLocaleString('es-CO')} COP`;
+    }
+
+    decreaseButton.addEventListener('click', () => {
+      if (currentPrice === 0) {
+          // No hacer nada si currentPrice ya es 0
+          return;
+      }
+
+      const oldPrice = currentPrice;
+      currentPrice -= step;
+
+      if (haveFiltersChanged(window.selectedCategories, oldPrice, currentPrice)) {
+          currentPage = 1;
+          window.renderProducts();
+          updatePriceValue();
+      }
+    });
+
+    increaseButton.addEventListener('click', () => {
+        const oldPrice = currentPrice;
+        currentPrice += step;
+
+        if (haveFiltersChanged(window.selectedCategories, oldPrice, currentPrice)) {
+            currentPage = 1;
+            window.renderProducts();
+            updatePriceValue();
+        }
+    });
+
+    // Inicialización
+    updatePriceValue();
+
+    priceInput.removeAttribute('readonly');
+
+    function formatPriceValue(value) {
+        const numericalValue = parseInt(value.replace(/\D/g, ''), 10);
+        
+        // Asegúrate de que siempre devuelvas un string aquí, nunca permitas que la función devuelva 'undefined'
+        if (!isNaN(numericalValue) && numericalValue <= maxPrice) {
+            return numericalValue.toLocaleString('es-CO'); // Esto devuelve un string
+        } else if (numericalValue > maxPrice) {
+            return maxPrice.toLocaleString('es-CO'); // Esto también devuelve un string
+        }
+        return ''; // Esto maneja casos de error, devolviendo un string vacío
+    }
+
+    // Nueva función que maneja el evento 'focus' en el input del precio
+    function handleInputFocus() {
+        // En lugar de limpiar el input, seleccionamos el número para que el usuario pueda escribir directamente y "sobrescribir" el valor.
+        // Este código asume que el valor está en el formato "123,456 COP". Ajusta según sea necesario para otros formatos.
+        const value = priceInput.value;
+        const numberEndIndex = value.indexOf('COP');
+        if (numberEndIndex > 0) {
+            // Seleccionamos solo la parte numérica (sin 'COP') para facilitar la edición.
+            priceInput.setSelectionRange(0, numberEndIndex - 1); // -1 para no incluir el espacio antes de 'COP'
+        } else {
+            // Si no hay 'COP' en el valor por alguna razón, simplemente seleccionamos todo.
+            priceInput.select();
+        }
+    }
+
+    // Variable para almacenar la posición del cursor
+    let cursorPosition = 0;
+
+    // Función para actualizar la posición del cursor
+    function updateCursorPosition(inputElement) {
+        // Asegurarse de que 'selectionStart' exista y no sea null antes de asignarlo
+        if (typeof inputElement.selectionStart === 'number') {
+            cursorPosition = inputElement.selectionStart;
+        }
+    }
+
+    function roundToThousand(value) {
+        // Convertir la entrada en un número. Elimina los no dígitos, y luego parsea como entero.
+        const numberValue = parseInt(value.replace(/\D/g, ''), 10);
+        if (!isNaN(numberValue)) {
+            // Redondear al mil más cercano.
+            return Math.ceil(numberValue / 5000) * 5000;
+        }
+        return 0; // Valor predeterminado si la conversión falla.
+    }
+
+    function handleRounding(event) {
+      const input = event.target instanceof HTMLInputElement ? event.target : null;
+      if (input) {
+        const roundedValue = roundToThousand(input.value);
+        currentPrice = roundedValue; // Asegúrate de que currentPrice esté disponible en el ámbito.
+
+        // Formatear el valor redondeado y actualizar el input.
+        input.value = `${roundedValue.toLocaleString('es-CO')} COP`;
+
+        // Coloca el cursor al final del número.
+        const cursorPosition = input.value.indexOf('COP') - 1; // -1 para colocarlo justo antes del espacio.
+        input.setSelectionRange(cursorPosition, cursorPosition);
+      }
+    }
+
+    priceInput.addEventListener('blur', handleRounding);
+
+    // Nueva función de escucha para el evento 'keydown'.
+    priceInput.addEventListener('keydown', (event) => {
+        // Verifica si la tecla presionada es "Enter".
+        if (event.key === 'Enter') {
+            // Evita que se envíe el formulario o se agregue una nueva línea si es un textarea.
+            event.preventDefault();
+
+            // Llama a la misma función que maneja el redondeo.
+            handleRounding(event);
+        }
+    });
+    
+    priceInput.addEventListener('input', (event) => {
+      const input = event.target instanceof HTMLInputElement ? event.target : null;
+      updateCursorPosition(input);
+
+      if (input) {
+          const selectionStart = input.selectionStart;
+          const formattedValue = formatPriceValue(input.value);
+          const newCurrentPrice = parseInt(formattedValue.replace(/\D/g, ''), 10) || 0;
+
+          input.value = formattedValue ? `${formattedValue} COP` : '';
+          updateCursorPosition(input);
+
+          // Aquí aplicamos la lógica de haveFiltersChanged
+          if (haveFiltersChanged(window.selectedCategories, currentPrice, newCurrentPrice)) {
+            currentPrice = newCurrentPrice;
+            currentPage = 1; // Restablece la página actual a 1
+            window.renderProducts();
+          }
+      }
+    });
+
+    // Escuchar los eventos de 'click' y 'keyup' para actualizar la posición del cursor
+    priceInput.addEventListener('click', (event) => {
+        const input = event.target instanceof HTMLInputElement ? event.target : null;
+        if (input) {
+            updateCursorPosition(input);
+        }
+    });
+
+    priceInput.addEventListener('keyup', (event) => {
+        const input = event.target instanceof HTMLInputElement ? event.target : null;
+        if (input) {
+            updateCursorPosition(input);
+        }
+    });
+
+    priceInput.addEventListener('focus', handleInputFocus);
+  });
+  function haveFiltersChanged(newSelectedCategories, oldPrice, newCurrentPrice) {
+    // Comprobar si el rango de precios ha cambiado
+    if (newCurrentPrice !== oldPrice) return true;
+
+    // Comprobar si las categorías seleccionadas han cambiado
+    const oldSelectedCategories = window.selectedCategories || [];
+    if (newSelectedCategories.length !== oldSelectedCategories.length) return true;
+
+    for (let category of newSelectedCategories) {
+      if (!oldSelectedCategories.includes(category)) return true;
+    }
+
+    return false;
+  }
+  function renderPagination(filteredProductCount, category) {
+    const pagination = document.getElementById("pagination");
+    const pageCount = Math.ceil(filteredProductCount / productsPerPage);
+
+    pagination.innerHTML = '';
+
+    // Si hay menos productos que el número máximo por página, no muestra la paginación
+    if (filteredProductCount <= productsPerPage) {
+        return;
+    }
+
+    if (pageCount > 1) {
+        for (let i = 1; i <= pageCount; i++) {
+            const pageLink = document.createElement('a');
+            pageLink.href = `#?page=${i}${category ? '&category=' + category : ''}`;
+            pageLink.className = `block h-8 w-8 rounded border border-gray-100 text-center leading-8 ${currentPage === i ? 'bg-black text-white' : ''}`;
+            pageLink.textContent = i.toString();
+            pageLink.addEventListener('click', (event) => {
+                event.preventDefault();
+                currentPage = i;
+                window.renderProducts();
+            });
+
+            const listItem = document.createElement('li');
+            listItem.appendChild(pageLink);
+            pagination.appendChild(listItem);
+        }
+    }
+}
+  window.renderProducts = function(filteredProducts = products) {
+    const productList = document.getElementById("productList");
+    const productCountElement = document.getElementById('productCount');
+
+     // Obtén la categoría desde la URL si existe
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryFromURL = urlParams.get('category');
+    if (categoryFromURL) {
+      window.selectedCategories = [categoryFromURL];
+    }
+
+    // Filtra los productos primero antes de aplicar la paginación
+    const filteredProductsToShow = filteredProducts.filter(product => {
+      const productPrice = parseInt(product.price.replace(/\D/g, ''), 10);
+      const priceCondition = currentPrice === 0 || productPrice <= currentPrice;
+      const categoryCondition = window.selectedCategories.length === 0 || window.selectedCategories.includes(product.category);
+      return priceCondition && categoryCondition;
+    });
+
+    // Actualiza el contador con el total de productos filtrados
+    productCountElement.textContent = filteredProductsToShow.length.toString();
+
+    // Aplica la paginación a los productos filtrados
+    const start = (currentPage - 1) * productsPerPage;
+    const end = start + productsPerPage;
+    const productsToShow = filteredProductsToShow.slice(start, end);
+
+    if (productsToShow.length === 0) {
+      productList.innerHTML = '<span class="no-products-message" style="display: block; margin-left: 118%; color: #ff0000; width: 100%;">Ningún producto encontrado</span>';
+    } else {
+      productList.innerHTML = productsToShow.map(product => `
+        <li>
+          <a href="${product.href}" class="group block overflow-hidden">
+            <img src="${product.imgSrc}" alt="" class="h-[350px] w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[510px]"/>
+            <div class="relative bg-white pt-3">
+              <h3 class="text-xs text-gray-700 group-hover:underline group-hover:underline-offset-4">${product.title}</h3>
+              <p class="mt-2">
+                <span class="sr-only">Regular Price</span>
+                ${product.oldPrice ? `<span class="tracking-wider" style="color: red;">${product.price}</span>` : `<span class="tracking-wider text-gray-900">${product.price}</span>`}
+                ${product.oldPrice ? `<span class="tracking-wider" style="color: #7a7a7a; text-decoration: line-through;">${product.oldPrice}</span>` : ''}
+              </p>
+            </div>
+          </a>
+        </li>
+      `).join('');
+    }
+
+    const initialFilteredProductCount = filteredProductsToShow.length;
+
+    // Llama a renderPagination con la cantidad actualizada de productos filtrados
+    renderPagination(initialFilteredProductCount, categoryFromURL);
+  };
+  document.addEventListener("DOMContentLoaded", function() {
+    // Obtener la categoría de la URL si está presente
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryFromURL = urlParams.get('category');
+
+    // Reiniciar currentPage a 1
+    currentPage = 1;
+
+    // Actualizar selectedCategories basado en la URL
+    if (categoryFromURL) {
+        window.selectedCategories = [categoryFromURL];
+    } else {
+        window.selectedCategories = []; // Reiniciar a vacío si no hay categoría en la URL
+    }
+
+    // Inicialización de window.renderProducts y renderPagination
+    window.renderProducts();
+  });
+</script>

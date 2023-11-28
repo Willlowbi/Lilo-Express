@@ -1,0 +1,240 @@
+---
+// Importa Swiper y sus estilos
+import Swiper from 'swiper';
+import 'swiper/swiper-bundle.css';
+---
+<br>
+<br>
+<br>
+<header>
+  <nav>
+    <ul>
+      <li><a href="/" class="custom-link">Inicio</a></li>
+      <li class="separator">></li>
+      <li><a href="/Hombre/Mens-R" class="custom-link">Hombre</a></li>
+      <li class="separator">></li>
+      <li>Ropa hombre</li>
+    </ul>    
+  </nav>
+</header>
+<div class="carousel-container">
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      <!-- Slides con imágenes de prueba -->
+      <div class="swiper-slide" id="Slide1">
+        <a href="/Hombre/Mens-R" class="slide-anchor">
+        <div class="slide-image" style="background-image: url('/images/carousel/Ropa-M.jpg');"></div>
+        <div class="slide-title">Ropa Hombre</div>
+        </a>
+      </div>      
+      <div class="swiper-slide">
+        <a href="/Hombre/Mens-R?category=Camisetas" class="slide-anchor">
+          <div class="slide-image" style="background-image: url('/images/carousel/Camisetas-M.jpg');"></div>
+        <div class="slide-title">Camisetas</div>
+        </a>
+      </div>
+      <div class="swiper-slide">
+        <a href="/Hombre/Mens-R?category=Camisas" class="slide-anchor">
+        <div class="slide-image" style="background-image: url('/images/carousel/Camisas-M.jpg');"></div>
+        <div class="slide-title">Camisas</div>
+        </a>
+      </div>
+      <div class="swiper-slide">
+        <a href="/Hombre/Mens-R?category=Jeans" class="slide-anchor">
+        <div class="slide-image" style="background-image: url('/images/carousel/Jeans-M.jpg');"></div>
+        <div class="slide-title">Jeans</div>
+        </a>
+      </div>
+      <div class="swiper-slide">
+        <a href="/Hombre/Mens-R?category=Pantalones" class="slide-anchor">
+        <div class="slide-image" style="background-image: url('/images/carousel/Pantalones-M.jpg');"></div>
+        <div class="slide-title">Pantalones</div>
+        </a>
+      </div>
+      <div class="swiper-slide">
+        <a href="/Hombre/Mens-R?category=Shorts" class="slide-anchor">
+        <div class="slide-image" style="background-image: url('/images/carousel/Shorts-M.jpg');"></div>
+        <div class="slide-title">Shorts</div>
+        </a>
+      </div>
+      <div class="swiper-slide">
+        <a href="/Hombre/Mens-R?category=Bermudas" class="slide-anchor">
+        <div class="slide-image" style="background-image: url('/images/carousel/Bermudas-M.jpg');"></div>
+        <div class="slide-title">Bermudas</div>
+        </a>
+      </div>
+    </div>
+    <!-- Botones de navegación -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // @ts-ignore: Uncaught TypeError: Failed to resolve module specifier "swiper"
+    var swiper = new Swiper('.swiper-container', {
+      slidesPerView: 5.5, /* Muestra 4 slides completos y un poco del quinto */
+      loop: true, /* Comportamiento circular */
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      on: {
+        init: function () {
+          applyNoOpacityEffectToSlide();
+          
+          const swiperContainer = document.querySelector('.swiper-container');
+          if (swiperContainer instanceof HTMLElement) {
+            swiperContainer.style.visibility = 'visible';
+          }
+        }
+      }
+    });
+
+    function applyNoOpacityEffectToSlide() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const categoryFromURL = urlParams.get('category');
+
+      // Primero, quita el estilo 'no-opacity-effect' de todas las diapositivas
+      document.querySelectorAll('.swiper-slide').forEach(function(slide) {
+        slide.classList.remove('no-opacity-effect');
+      });
+
+      // Luego, aplica el estilo a la diapositiva relevante
+      if (categoryFromURL) {
+        document.querySelectorAll('.swiper-slide').forEach(function(slide) {
+          const anchor = slide.querySelector('.slide-anchor');
+          if (anchor instanceof HTMLAnchorElement && anchor.href.includes('category=' + categoryFromURL)) {
+            slide.classList.add('no-opacity-effect');
+          }
+        });
+      } else {
+        // Si no hay categoría en la URL, aplica el estilo a la diapositiva "Ropa Hombre" por defecto
+        const defaultSlide = document.getElementById('Slide1');
+        if (defaultSlide) {
+          defaultSlide.classList.add('no-opacity-effect');
+        }
+      }
+    }
+  });
+</script>
+
+<style>
+  /* Ocultar inicialmente el carrusel */
+  .swiper-container {
+    visibility: hidden; /* o 'display: none;' si prefieres */
+  }
+
+  body {
+  overflow-y: auto; /* Asegura que se puede desplazar verticalmente */
+  }
+  .carousel-container {
+    width: calc(224px * 5 + 112px); /* Ajustar el ancho para mostrar 5 slides completamente y el sexto parcialmente */
+    height: 336.42px;
+    overflow: hidden; /* Ocultar el desbordamiento */
+    position: relative; /* Posición relativa para permitir la navegación absoluta */
+    margin: 0 auto; /* Centra el contenedor horizontalmente */
+  }
+  .swiper-container {
+    width: 100%;
+    height: 100%;
+    position: relative; /* Posición relativa para permitir la navegación absoluta */
+  }
+  .swiper-slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .slide-image {
+    width: 224px;
+    height: 336.42px;
+    background-size: cover;
+    background-position: center;
+    width: 100%; /* se ajusta al 100% del ancho de su contenedor padre (el enlace) */
+    height: 100%;
+  }
+
+  /* Estilo para las imágenes del slide */
+  .swiper-slide:not(.no-opacity-effect) .slide-image {
+    opacity: 0.5; /* Esto hace que la imagen sea opaca inicialmente */
+    transition: opacity 0.5s ease; /* Esto hace que el cambio de opacidad sea suave */
+  }
+
+  .swiper-slide:not(.no-opacity-effect):hover .slide-image {
+    opacity: 1; /* Esto hace que la opacidad sea normal cuando se pasa el mouse */
+  }
+
+  .slide-title {
+    margin-top: 10px; /* Ajusta el espacio entre la imagen y el título */
+    font-weight: bold;
+  }
+
+  .slide-anchor {
+    text-decoration: none; /* quita el subrayado del enlace */
+    color: inherit; /* el enlace adopta el color de su elemento padre, evitando cambios inesperados */
+    display: flex; /* hace que el contenido del enlace se maneje como cajas flexibles */
+    flex-direction: column; /* ordena el contenido del enlace en una columna */
+    align-items: center; /* centra el contenido horizontalmente */
+    justify-content: center; /* centra el contenido verticalmente */
+    width: 100%; /* asegura que el enlace cubra todo el ancho del slide */
+    height: 100%; /* asegura que el enlace cubra toda la altura del slide */
+  }
+
+  .swiper-button-prev, .swiper-button-next {
+    position: absolute; /* z-index solo funciona en elementos posicionados (no estáticos) */
+    z-index: 1;
+    width: 28px;
+    height: 28px;
+    color: black;
+  }
+
+  .swiper-button-prev::after, .swiper-button-next::after {
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  nav ul {
+    list-style-type: none; /* Elimina los bullets de la lista */
+    padding: 0; /* Elimina el padding */
+    margin: 0; /* Elimina el margen */
+    display: flex; /* Display flex para que los elementos estén en línea */
+    align-items: center; /* Alinea los elementos al centro verticalmente */
+  }
+
+  nav li {
+    margin-right: 5px; /* Espacio a la derecha de cada elemento */
+  }
+
+  nav li:last-child {
+    margin-right: 0; /* Elimina el espacio a la derecha del último elemento */
+  }
+
+  nav a {
+    text-decoration: none; /* Elimina el subrayado de los enlaces */
+  }
+
+  header {
+    display: flex;
+    margin: 10px 0;
+    margin-left: 60px;
+    font-weight: bold;
+  }
+
+  /* Estilos personalizados para los enlaces */
+  .custom-link {
+    color: #D3D3D3; /* gris clarito */
+    transition: color 0.3s ease; /* Esta línea hará que el cambio de color sea gradual y no brusco */
+  }
+
+  .custom-link:hover {
+    color: #21bb97; /* El color que has proporcionado */
+  }
+
+  /* Estilos para los separadores */
+  .separator {
+    color: #D3D3D3; /* gris clarito */
+    /* Agrega aquí cualquier otro estilo que desees aplicar específicamente a los separadores */
+  }
+</style>

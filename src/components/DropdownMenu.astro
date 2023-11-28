@@ -1,0 +1,309 @@
+---
+// Puedes pasar los ítems del menú como props, o definirlos directamente en el componente
+---
+
+<div class="dropdown-menu" id="menu-hombre">
+    <div class="flex">
+        <div class="menu-column line-right">
+            <ul>
+                <li class="collection-item">
+                    <a href="/Hombre/Mens-R">Colección</a>
+                </li>
+                <li class="new-item">
+                    <a href="#">Nuevo</a>
+                </li>
+                <li class="thematic-item">
+                    <a href="#">Temáticas</a>
+                </li>
+            </ul>
+        </div>
+        <div class="menu-column">
+            <h3 class="special-title">
+                <a href="/Hombre/Mens-R">Ropa</a>
+            </h3>
+            <ul>
+                <li class="hover-item">
+                    <a href="/Hombre/Mens-R?category=Camisetas">Camisetas</a>
+                </li>
+                <li class="hover-item">
+                    <a href="/Hombre/Mens-R?category=Camisas">Camisas</a>
+                </li>
+            </ul>
+        </div>
+        <div class="menu-column">
+            <ul>
+                <li class="hover-item-j">
+                    <a href="/Hombre/Mens-R?category=Jeans">Jeans</a>
+                </li>
+                <li class="hover-item">
+                    <a href="/Hombre/Mens-R?category=Pantalones">Pantalones</a>
+                </li>
+                <li class="hover-item">
+                    <a href="/Hombre/Mens-R?category=Shorts">Shorts</a>
+                </li>
+                <li class="hover-item">
+                    <a href="/Hombre/Mens-R?category=Bermudas">Bermudas</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="dropdown-menu" id="menu-mujer">
+    <div class="flex">
+        <div class="menu-column line-right">
+            <ul>
+                <li class="collection-item-woman">
+                    <a href="#">Colección</a>
+                </li>
+                <li class="new-item-woman">
+                    <a href="#">Nuevo</a>
+                </li>
+                <li class="thematic-item-woman">
+                    <a href="#">Temáticas</a>
+                </li>
+            </ul>
+        </div>
+        <div class="menu-column">
+            <h3 class="ropa-item">
+                <a href="#">Ropa</a>
+            </h3>
+            <ul>
+                <li class="hover-item">
+                    <a href="#">Blusas</a>
+                </li>
+                <li class="hover-item">
+                    <a href="#">Camisas</a>
+                </li>
+                <li class="hover-item">
+                    <a href="#">Crop Tops</a>
+                </li>
+            </ul>
+        </div>
+        <div class="menu-column">
+            <ul>
+                <li class="hover-item-j">
+                    <a href="#">Jeans</a>
+                </li>
+                <li class="hover-item">
+                    <a href="#">Pantalones</a>
+                </li>
+                <li class="hover-item">
+                    <a href="#">Vestidos</a>
+                </li>
+                <li class="hover-item">
+                    <a href="#">Overoles</a>
+                </li>
+                <li class="hover-item">
+                    <a href="#">Shorts</a>
+                </li>
+                <li class="hover-item">
+                    <a href="#">Faldas</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<style>
+    .menu-column {
+        margin-right: 20px; /* O el margen que prefieras */
+    }
+
+    .menu-column h3 {
+        margin-left: 10px;
+        margin-top: 23px;
+        font-weight: bold;
+        margin-bottom: 10px; /* O el margen que prefieras */
+        color: red; /* Cambiar el color a rojo */
+        text-decoration: underline; /* Añadir subrayado */
+    }
+
+    .menu-column ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .menu-column ul li {
+        margin-bottom: 5px; /* O el margen que prefieras */
+    }
+
+    .menu-column.line-right {
+        border-right: 1px solid lightgray; /* Color de la línea */
+        padding-right: 60px; /* Espacio a la derecha del contenido */
+        margin-right: 20px; /* Añadir márgenes para separar los divs */
+        margin-top: -20px;
+        height: 375px; /* Asegurar que la línea cubra toda la altura del menú desplegable */
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 68px; /* Ajusta según la altura de tu header */
+        left: 0;
+        width: 100vw;
+        height: 375px;
+        background-color: #fff; /* O el color que prefieras */
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); /* O la sombra que prefieras */
+        padding: 20px; /* O el padding que prefieras */
+        z-index: 1000; /* Asegurarse de que aparezca por encima de otros elementos */
+    }
+
+    .group:hover .dropdown-menu {
+        display: block;
+    }
+
+    .menu-column:first-child ul li {
+        font-size: 20px;
+    }
+
+    /* Ajustar el tamaño de fuente de las demás palabras */
+    .menu-column ul li,
+    .menu-column h3 {
+        font-size: 16px;
+    }
+
+    .collection-item:hover {
+        color: #add8e6;
+        text-decoration: underline;
+    }
+    .collection-item {
+        height: 90px;
+        padding: 40px 0;
+    }
+
+    .new-item:hover {
+        color: #ff6b6b;
+        text-decoration: underline;
+    }
+    .new-item {
+        height: 55px;
+        padding: 2px 0;
+    }
+
+    .thematic-item:hover {
+        color: #ffa07a;
+        text-decoration: underline;
+    }
+
+    .collection-item-woman:hover {
+        color: #ff69b4;
+        text-decoration: underline;
+    }
+    .collection-item-woman {
+        height: 90px;
+        padding: 40px 0;
+    }
+
+    .new-item-woman:hover {
+        color: #ff6b6b;
+        text-decoration: underline;
+    }
+    .new-item-woman {
+        height: 55px;
+        padding: 2px 0;
+    }
+
+    .thematic-item-woman:hover {
+        color: #ffa07a;
+        text-decoration: underline;
+    }
+
+    .hover-item:hover {
+        color: #21bb97;
+    }
+    .hover-item {
+        margin-left: 10px;
+    }
+
+    .hover-item-j:hover {
+        color: #21bb97;
+    }
+    .hover-item-j {
+        margin-left: 10px;
+        margin-top: 55px;
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const collectionItem = document.querySelector(".collection-item");
+        const newItem = document.querySelector(".new-item");
+        const thematicItem = document.querySelector(".thematic-item");
+        const specialTitles = document.querySelectorAll(".special-title");
+
+        // Función para cambiar el color de los títulos especiales
+        function changeSpecialTitlesColor(color) {
+            specialTitles.forEach((title) => {
+                (title as HTMLElement).style.color = color;
+            });
+        }
+
+        // Eventos para "Colección"
+        collectionItem.addEventListener("mouseenter", function () {
+            changeSpecialTitlesColor("#add8e6"); // Azul pastel
+        });
+
+        collectionItem.addEventListener("mouseleave", function () {
+            changeSpecialTitlesColor("red"); // Color original
+        });
+
+        // Eventos para "Nuevo"
+        newItem.addEventListener("mouseenter", function () {
+            changeSpecialTitlesColor("#ff6b6b"); // Rojo pastel
+        });
+
+        newItem.addEventListener("mouseleave", function () {
+            changeSpecialTitlesColor("red"); // Color original
+        });
+
+        // Eventos para "Temáticas"
+        thematicItem.addEventListener("mouseenter", function () {
+            changeSpecialTitlesColor("#FFA07A"); // Color definido por ti
+        });
+
+        thematicItem.addEventListener("mouseleave", function () {
+            changeSpecialTitlesColor("red"); // Color original
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const collectionWoman = document.querySelector(
+            ".collection-item-woman",
+        );
+        const newWoman = document.querySelector(".new-item-woman");
+        const thematicWoman = document.querySelector(".thematic-item-woman");
+        const ropaWoman = document.querySelector(".ropa-item");
+        const accesoriosWoman = document.querySelector(".accesorios-item");
+
+        if (
+            !collectionWoman ||
+            !newWoman ||
+            !thematicWoman ||
+            !ropaWoman ||
+            !accesoriosWoman
+        ) {
+            console.error("Algunos elementos no se han encontrado en el DOM");
+            return;
+        }
+
+        function resetColorWoman() {
+            (ropaWoman as HTMLElement).style.color = "";
+            (accesoriosWoman as HTMLElement).style.color = "";
+        }
+
+        collectionWoman.addEventListener("mouseenter", function () {
+            (ropaWoman as HTMLElement).style.color = "#FF69B4";
+            (accesoriosWoman as HTMLElement).style.color = "#FF69B4";
+        });
+        collectionWoman.addEventListener("mouseleave", resetColorWoman);
+
+        newWoman.addEventListener("mouseenter", function () {
+            (ropaWoman as HTMLElement).style.color = "#ff6b6b";
+            (accesoriosWoman as HTMLElement).style.color = "#ff6b6b";
+        });
+        newWoman.addEventListener("mouseleave", resetColorWoman);
+
+        thematicWoman.addEventListener("mouseenter", function () {
+            (ropaWoman as HTMLElement).style.color = "#FFA07A";
+            (accesoriosWoman as HTMLElement).style.color = "#FFA07A";
+        });
+        thematicWoman.addEventListener("mouseleave", resetColorWoman);
+    });
+</script>

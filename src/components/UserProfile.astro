@@ -1,0 +1,365 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<br />
+<br />
+<br />
+<div
+  id="user-data-box"
+  style="
+    max-width: 600px; 
+    width: 100%; 
+    margin: 0 auto;
+    border: 1px solid black;
+    padding: 10px; 
+    box-sizing: border-box;"
+>
+  <table
+    border="1"
+    cellspacing="0"
+    cellpadding="10"
+    style="width:100%; height: 100%; border-collapse: collapse;"
+  >
+    <tr>
+      <td
+        colspan="2"
+        class="custom-header"
+        style="font-weight:bold; font-size: 20px; padding: 20px 0; text-align: center;"
+        >DATOS PERSONALES</td
+      >
+    </tr>
+    <tr id="error-message" style="display:none;">
+      <td colspan="2" style="color: red; text-align: center;"
+        >*Campo requerido</td
+      >
+    </tr>
+    <tr>
+      <td class="social-title-cell" style="width:41%; padding: 10px 10px"
+        >Título social</td
+      >
+      <td
+        ><input
+          id="genero"
+          type="text"
+          placeholder="Género"
+          style="border: 1px solid black; width: calc(100% - 24px); padding: 10px; box-sizing: border-box;"
+        /></td
+      >
+    </tr>
+    <tr>
+      <td class="social-title-cell" style="padding: 10px 10px">Nombre</td>
+      <td
+        ><input
+          id="nombre"
+          type="text"
+          placeholder="Nombre"
+          style="border: 1px solid black; width: calc(100% - 24px); padding: 10px; box-sizing: border-box;"
+        /></td
+      >
+    </tr>
+    <tr>
+      <td class="social-title-cell" style="padding: 10px 10px">Apellido</td>
+      <td
+        ><input
+          id="apellido"
+          type="text"
+          placeholder="Apellido"
+          style="border: 1px solid black; width: calc(100% - 24px); padding: 10px; box-sizing: border-box;"
+        /></td
+      >
+    </tr>
+    <tr>
+      <td class="social-title-cell" style="padding: 10px 10px"
+        >Correo electrónico</td
+      >
+      <td
+        ><input
+          id="email"
+          type="text"
+          placeholder="Email"
+          style="border: 1px solid black; width: calc(100% - 24px); padding: 10px; box-sizing: border-box;"
+        /></td
+      >
+    </tr>
+    <tr>
+      <td style="padding: 10px 10px">Número de Identificación</td>
+      <td
+        ><input
+          id="numeroIdentificacion"
+          type="text"
+          placeholder="numeroIdentificacion"
+          style="border: 1px solid black; width: calc(100% - 24px); padding: 10px; box-sizing: border-box;"
+        /></td
+      >
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center; padding: 20px 0;">
+        <button
+          id="update-button"
+          class="bg-black text-white px-2 py-2 border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none hover:border-black hover:bg-white hover:text-black"
+          style="border-radius: 0;"
+        >
+          Actualizar
+        </button>
+    </td>    
+    </tr>
+  </table>
+</div>
+
+<style>
+  .social-title-cell {
+    text-align: right; /* Alinea el texto a la derecha dentro de la celda */
+  }
+  .custom-header {
+    position: relative; /* Necesario para el posicionamiento del pseudo-elemento */
+  }
+
+  .custom-header::after {
+    content: ""; /* Necesario para los pseudo-elementos */
+    display: block; /* Hace que el elemento sea un bloque, necesario para darle ancho y alto */
+    position: absolute; /* Permite posicionar el elemento con precisión */
+    left: 2%; /* Desplaza el elemento desde la izquierda, el valor exacto dependerá de tus necesidades */
+    right: 2%; /* Desplaza el elemento desde la derecha, el valor exacto dependerá de tus necesidades */
+    bottom: 10px; /* Posiciona el elemento en la parte inferior del elemento padre */
+    height: 1px; /* El grosor de la línea */
+    background-color: #000; /* El color de la línea, en este caso, negro */
+  }
+
+  /* Estilos generales */
+  #user-data-box {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    border: 1px solid black;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  /* Estilos que solo se aplicarán en vistas móviles o pantallas menores de 600px */
+  @media (max-width: 600px) {
+    #user-data-box table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #user-data-box td,
+    #user-data-box th {
+      padding: 10px;
+      text-align: left;
+    }
+
+    #user-data-box input {
+      width: 100%;
+      box-sizing: border-box; /* Asegura que el padding y el borde están incluidos en el ancho total */
+      padding: 10px;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  // Este es un ejemplo de una función que puedes llamar cuando tu aplicación se carga o cuando el usuario navega a una nueva ruta.
+
+  async function checkAuthentication() {
+    try {
+      // Realiza una solicitud al endpoint que verifica la autenticación.
+      const response = await fetch("http://localhost:3001/isAuthenticated", {
+        method: "GET",
+        credentials: "include", // Para asegurarte de que las cookies se incluyan con la solicitud.
+      });
+
+      const data = await response.json();
+
+      if (!data.isAuthenticated) {
+        // Si el usuario no está autenticado, redirígelo a la página de inicio de sesión.
+        window.location.href = "/Login"; // Asumiendo que "/login" es tu ruta de inicio de sesión.
+      } else {
+        // Aquí, el usuario está autenticado, y puedes realizar cualquier lógica posterior, como renderizar la UI.
+      }
+    } catch (error) {
+      console.error("Hubo un error al verificar la autenticación:", error);
+      // Aquí también puedes redirigir al usuario a la página de inicio de sesión en caso de un error.
+      window.location.href = "/Login";
+    }
+  }
+
+  // Llama a esta función cuando tu aplicación se carga o cuando sea apropiado en el ciclo de vida de tu aplicación o componente.
+  checkAuthentication();
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      // Obtener los datos iniciales del usuario
+      const response = await fetch("http://localhost:3001/user", {
+        credentials: "include", // Asegúrate de que las cookies se incluyan para la autenticación
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al obtener los datos del usuario");
+      }
+
+      const data = await response.json();
+
+      // Asegúrate de declarar las variables para tus inputs
+      const generoInput = document.getElementById("genero") as HTMLInputElement;
+      const nombreInput = document.getElementById("nombre") as HTMLInputElement;
+      const apellidoInput = document.getElementById(
+        "apellido",
+      ) as HTMLInputElement;
+      const emailInput = document.getElementById("email") as HTMLInputElement;
+      const numeroIdentificacionInput = document.getElementById(
+        "numeroIdentificacion",
+      ) as HTMLInputElement;
+
+      (document.getElementById("genero") as HTMLInputElement).value =
+        data.genero || "";
+      (document.getElementById("nombre") as HTMLInputElement).value =
+        data.nombre || "";
+      (document.getElementById("apellido") as HTMLInputElement).value =
+        data.apellido || "";
+      (document.getElementById("email") as HTMLInputElement).value =
+        data.email || "";
+      (
+        document.getElementById("numeroIdentificacion") as HTMLInputElement
+      ).value = data.numeroIdentificacion || "";
+
+      // VALIDACIÓN: Número de Identificación (debe contener exactamente 10 dígitos)
+      numeroIdentificacionInput.addEventListener("input", function () {
+        // Elimina cualquier caracter que no sea dígito
+        this.value = this.value.replace(/[^0-9]/g, "");
+
+        // Si ya hay 10 dígitos, no permite más ingresos
+        if (this.value.length > 10) {
+          this.value = this.value.substring(0, 10);
+        }
+      });
+
+      numeroIdentificacionInput.addEventListener("blur", function () {
+        // Verifica si el valor no tiene exactamente 10 dígitos
+        if (this.value.length !== 10) {
+          alert(
+            "El Número de Identificación debe contener exactamente 10 dígitos.",
+          );
+
+          // Uso de setTimeout para dar un retraso antes de recuperar el foco
+          setTimeout(() => {
+            numeroIdentificacionInput.focus();
+          }, 100); // 100 milisegundos de retraso
+        }
+      });
+
+      // VALIDACIÓN: Título Social (solo 'hombre' o 'mujer')
+      generoInput.addEventListener("blur", function () {
+        if (
+          this.value.toLowerCase() !== "hombre" &&
+          this.value.toLowerCase() !== "mujer"
+        ) {
+          alert('Por favor, ingrese "hombre" o "mujer" en el campo de género.');
+          this.value = "";
+        }
+      });
+
+      // VALIDACIÓN: Primer letra en mayúsculas para cada palabra en nombre y apellido
+      [nombreInput, apellidoInput].forEach((input) => {
+        input.addEventListener("blur", function () {
+          this.value = this.value
+            .split(" ")
+            .map(function (palabra) {
+              // Verifica si la palabra no está vacía para evitar procesar espacios extras como palabras
+              if (palabra.length > 0) {
+                // Convierte la primera letra a mayúscula y el resto a minúsculas.
+                return (
+                  palabra.charAt(0).toUpperCase() +
+                  palabra.slice(1).toLowerCase()
+                );
+              }
+              return ""; // Retorna una cadena vacía para "palabras" que eran espacios
+            })
+            .join(" "); // Une todo de nuevo en una sola cadena con espacios entre palabras
+        });
+      });
+
+      // VALIDACIÓN: Verificar email
+      emailInput.addEventListener("blur", function () {
+        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!regex.test(this.value)) {
+          alert("Por favor, ingrese un email válido.");
+          this.value = "";
+        }
+      });
+
+      // Preparación para la actualización de datos del usuario
+      document
+        .getElementById("update-button")
+        .addEventListener("click", async () => {
+          const genero = (generoInput as HTMLInputElement).value;
+          const nombre = (nombreInput as HTMLInputElement).value;
+          const apellido = (apellidoInput as HTMLInputElement).value;
+          const email = (emailInput as HTMLInputElement).value;
+          const numeroIdentificacion = (
+            numeroIdentificacionInput as HTMLInputElement
+          ).value;
+
+          // Verificar si los campos están vacíos
+          if (
+            !genero ||
+            !nombre ||
+            !apellido ||
+            !email ||
+            !numeroIdentificacion
+          ) {
+            document.getElementById("error-message").style.display = ""; // Esto quitará el 'display:none' haciendo que el elemento se muestre.
+            return; // Detiene la ejecución de la función si hay campos vacíos
+          } else {
+            // Si todos los campos están llenos, asegúrese de que el mensaje de error esté oculto.
+            document.getElementById("error-message").style.display = "none";
+          }
+
+          // Verificar si los datos son los mismos (es decir, si no se ha realizado ningún cambio)
+          const sinCambios =
+            genero === data.genero &&
+            nombre === data.nombre &&
+            apellido === data.apellido &&
+            email === data.email &&
+            numeroIdentificacion === data.numeroIdentificacion;
+
+          if (sinCambios) {
+            alert("No se ha realizado ningún cambio en los datos.");
+            window.location.reload();
+            return;
+          }
+
+          const updatedData = {
+            genero: genero,
+            nombre: nombre,
+            apellido: apellido,
+            email: email,
+            numeroIdentificacion: numeroIdentificacion,
+          };
+
+          // Solicitud para actualizar datos
+          const updateResponse = await fetch(
+            "http://localhost:3001/user/update",
+            {
+              // Asegúrate de que la URL sea correcta para tu API
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include", // Importante para las sesiones y la autenticación
+              body: JSON.stringify(updatedData),
+            },
+          );
+
+          if (updateResponse.ok) {
+            alert("Datos actualizados correctamente");
+            window.location.reload();
+          } else {
+            throw new Error("Error al actualizar los datos");
+          }
+        });
+    } catch (error) {
+      console.error("Error al cargar o actualizar datos:", error);
+      alert(
+        "Hubo un problema al cargar o actualizar los datos. Por favor, intenta de nuevo.",
+      );
+    }
+  });
+</script>

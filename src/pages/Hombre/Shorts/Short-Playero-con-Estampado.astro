@@ -1,0 +1,193 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import HeaderWithMobileMenu from "../../../components/HeaderWithMobileMenu.astro";
+import SPACE from "../../../components/Hombre/Shorts/Short-Playero-con-Estampado.astro";
+import Footer from "../../../components/Footer.astro"
+---
+
+<Layout title="Short-Playero-con-Estampado">
+    <main>
+		<HeaderWithMobileMenu />
+        <SPACE />
+		<Footer />
+		<img src="/images/Microfono-IA.svg" class="fixed-image" />
+	</main>
+</Layout>
+
+<style>
+	.fixed-image {
+		position: fixed; /* Posición fija en la página */
+		z-index: 1000; /* Asegura que esté sobre otros elementos */
+		top: 530px; /* Ajusta la posición vertical según necesites */
+		right: 10px; /* Ajusta la posición horizontal según necesites */
+		width: 85px; /* Ajusta el tamaño de la imagen */
+		border-radius: 50%; /* Hace que el borde se ajuste a la forma circular */
+		cursor: pointer; /* Indica que es clickeable */
+		background-color: transparent; /* Asegura que el fondo sea transparente */
+	}
+	.fixed-image:active {
+		animation: border-pulse 0.4s ease-out;
+	}
+	@keyframes border-pulse {
+		0% {
+			box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+		}
+		100% {
+			box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+		}
+	}
+</style>
+<script>
+	let colaDeMensajes = [];
+   let esperandoRespuestaUsuario = false;
+   let esperandoFinDeHabla = false;
+   let reconocimientoActivo = false;
+   let timeoutId;
+   let isFirstInteraction = true;
+   let isSecondInteraction = false;
+   let isManualActivation = false;
+
+   function procesarColaDeMensajes() {
+	   if (colaDeMensajes.length > 0 && !window.speechSynthesis.speaking) {
+		   const mensajeActual = colaDeMensajes.shift();
+		   speak(mensajeActual.texto, mensajeActual.callback);
+	   }
+   }
+
+   function agregarAMensajeACola(texto, callback = () => {}) {
+	   colaDeMensajes.push({ texto, callback });
+	   procesarColaDeMensajes();
+   }
+
+   function speak(sentence, callback) {
+	   if (window.speechSynthesis.speaking) {
+		   window.speechSynthesis.cancel();
+	   }
+	   const text_speak = new SpeechSynthesisUtterance(sentence);
+	   text_speak.onend = () => {
+		   if (callback) callback();
+		   procesarColaDeMensajes();
+		   if (!reconocimientoActivo && !esperandoFinDeHabla) {
+			   iniciarReconocimiento();
+		   }
+	   };
+	   text_speak.rate = 1;
+	   text_speak.pitch = 1;
+	   window.speechSynthesis.speak(text_speak);
+   }
+
+   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+   function iniciarReconocimiento() {
+	   if (!reconocimientoActivo) {
+		   recognition.start();
+		   reconocimientoActivo = true;
+		   esperandoRespuestaUsuario = true;
+
+		   timeoutId = setTimeout(() => {
+			   if (esperandoRespuestaUsuario) {
+				   desactivarAsistente();
+			   }
+		   }, 4000); // 4 segundos
+	   }
+   }
+
+   recognition.onstart = () => {
+	   clearTimeout(timeoutId);
+	   if (isManualActivation) { // Solo agregar mensaje si la activación es manual
+		   if (isFirstInteraction) {
+			   agregarAMensajeACola("Hola, bienvenido a nuestra tienda virtual. Soy Lix, tu asistente personal. ¿En qué puedo ayudarte hoy?");
+			   isFirstInteraction = false;
+			   isSecondInteraction = true; // Configurar para la próxima activación
+		   } else if (isSecondInteraction) {
+			   agregarAMensajeACola("Hola, ¿En qué puedo ayudarte hoy?");
+		   }
+		   isManualActivation = false; // Restablecer después de agregar mensaje
+	   }
+   };
+
+   recognition.onresult = (event) => {
+	   clearTimeout(timeoutId);
+	   const current = event.resultIndex;
+	   const transcript = event.results[current][0].transcript;
+	   if (transcript && transcript.trim() !== '') {
+		   esperandoFinDeHabla = true;
+		   speakThis(transcript.toLowerCase());
+		   esperandoRespuestaUsuario = false;
+	   }
+   };
+
+   recognition.onend = () => {
+	   reconocimientoActivo = false;
+	   esperandoRespuestaUsuario = false;
+	   esperandoFinDeHabla = false;
+	   clearTimeout(timeoutId);
+   };
+
+   function desactivarAsistente() {
+	   if (reconocimientoActivo) {
+		   recognition.stop();
+	   }
+	   console.log("Asistente desactivado y micrófono deshabilitado");
+	   isFirstInteraction = false; // Asegurarse de que no se resetee a la bienvenida inicial
+   }
+
+   document.addEventListener('DOMContentLoaded', () => {
+	   const micIcon = document.getElementById('micIcon');
+	   if (micIcon) {
+		   micIcon.addEventListener('click', () => {
+			   isManualActivation = true; // Se activa manualmente
+			   navigator.mediaDevices.getUserMedia({ audio: true })
+				   .then(() => {
+					   iniciarReconocimiento();
+				   })
+				   .catch(err => {
+					   console.error('El usuario no dio permiso para el micrófono:', err);
+					   agregarAMensajeACola('Necesito tu permiso para usar el micrófono.');
+					   isManualActivation = false; // Restablecer si hay un error
+				   });
+		   });
+	   }
+   });
+
+   function obtenerRecomendacion(endpoint) {
+	   fetch(`http://localhost:3001${endpoint}`)
+		   .then(response => response.json())
+		   .then(data => {
+			   let mensaje = `Te recomiendo ${data.recomendacion}`;
+			   if (data.link) {
+				   mensaje += ". Puedes ver más detalles aquí.";
+			   }
+			   agregarAMensajeACola(mensaje, () => {
+				   if (data.link) {
+					   window.open(data.link, '_self');
+				   }
+			   });
+		   })
+		   .catch(error => {
+			   console.error('Error al obtener la recomendación:', error);
+			   agregarAMensajeACola('Lo siento, hubo un error al obtener la recomendación.');
+		   });
+   }
+
+   function speakThis(message) {
+	   if (!message || message.trim() === '') {
+		   esperandoFinDeHabla = false;
+		   return;
+	   }
+
+	   if (message.includes('recomiéndame algo') || message.includes('qué me recomiendas')) {
+		   agregarAMensajeACola("Claro, puedo ayudarte. Puedes pedirme que te recomiende 'una prenda/ropa popular', 'ropa de verano', o 'algo al azar'. ¿Cuál prefieres?");
+	   } else if ((message.includes('recomienda') || message.includes('recomiéndame')) && (message.includes('una prenda popular') || message.includes('ropa popular'))) {
+		   obtenerRecomendacion('/recomendar/menos-stock');
+	   } else if (message.includes('ropa de verano')) {
+		   obtenerRecomendacion('/recomendar/temporada?temporada=verano');
+	   } else if (message.includes('recomienda algo al azar')) {
+		   obtenerRecomendacion('/recomendar/aleatorio');
+	   } else {
+		   agregarAMensajeACola("No entendí lo que dijiste, por favor prueba de nuevo");
+	   }
+	   esperandoFinDeHabla = false;
+	   esperandoRespuestaUsuario = false;
+   }
+</script>

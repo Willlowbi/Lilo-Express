@@ -1,0 +1,66 @@
+<!-- Vista de Móvil -->
+<div id="mobile-user-menu-icon" class="group relative cursor-pointer lg:hidden">
+    <a href="#" class="flex items-center" aria-label="Perfil de Usuario">
+        <!-- Icono del usuario -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+            <path
+                stroke-Linecap="round"
+                stroke-Linejoin="round"
+                stroke-Width="2"
+                d="M12 4a4 4 0 100 8 4 4 0 000-8zm0 10c4.28 0 8 1.7 8 4v2H4v-2c0-2.3 3.72-4 8-4z"
+            ></path>
+        </svg>
+    </a>
+    <div id="mobile-user-menu-dropdown" class="absolute right-0 px-4 py-2 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-md hidden text-center">
+        <button
+            onclick="
+            location.href = '/Login'
+            "
+            class="w-full text-center font-bold py-2 rounded-md hover:bg-gray-200"
+            style={{ color: "#add8e6" }}
+        >
+            Iniciar sesión
+        </button>
+        <hr class="my-2" />
+        <p class="text-center mb-2 text-sm font-bold">¿NO TIENES CUENTA AÚN?</p>
+        <button
+            onclick="
+            location.href = '/Register'
+"
+            class="w-full text-center font-bold py-2 rounded-md text-red-500 hover:bg-gray-200"
+        >
+            Regístrate
+        </button>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Seleccionar el icono y el menú desplegable
+        const icon = document.getElementById("mobile-user-menu-icon");
+        const dropdown = document.getElementById("mobile-user-menu-dropdown");
+        
+        // Verificar si los elementos existen
+        if (!icon || !dropdown) return;
+
+        // Función para mostrar/ocultar el menú desplegable
+        const toggleDropdown = () => {
+            dropdown.classList.toggle('hidden');
+        };
+
+        // Evento de clic para el icono
+        icon.addEventListener("click", (event) => {
+            event.stopPropagation(); // Detener la propagación del evento
+            toggleDropdown();
+        });
+
+        // Evento de clic para el documento
+        document.addEventListener("click", () => {
+            dropdown.classList.add('hidden');
+        });
+
+        // Evento de clic para el menú desplegable
+        dropdown.addEventListener("click", (event) => {
+            event.stopPropagation(); // Detener la propagación del evento
+        });
+    });
+</script>

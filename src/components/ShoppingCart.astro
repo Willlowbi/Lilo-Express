@@ -1,0 +1,392 @@
+<div
+    id="overlay"
+    class="fixed inset-0 bg-black bg-opacity-60 transition-opacity"
+    style="opacity: 0; pointer-events: none;"
+>
+</div>
+<div
+  class="transition-transform ease-out duration-500 transform translate-x-full fixed inset-0 overflow-hidden pointer-events-none"
+  id="shopping-cart"
+  aria-labelledby="slide-over-title"
+  role="dialog"
+  aria-modal="true"
+  style="display: none;"
+>
+  <div class="fixed inset-0 overflow-hidden" style="pointer-events: none;">
+    <div class="absolute inset-0 overflow-hidden" style="pointer-events: none;">
+      <div
+        class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10"
+      >
+        <div class="pointer-events-auto w-screen max-w-md">
+          <div
+            class="flex h-full flex-col bg-white shadow-xl"
+          >
+            <div class="flex-1 px-4 py-6 sm:px-6">
+              <div class="flex items-start justify-between">
+                <h2
+                  class="text-lg font-medium text-gray-900"
+                  id="slide-over-title"
+                >
+                  Carrito
+                </h2>
+                <div class="ml-3 flex h-7 items-center">
+                  <button
+                    type="button"
+                    class="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
+                  >
+                    <span class="absolute -inset-0.5"></span>
+                    <span class="sr-only">Close panel</span>
+                    <svg
+                      class="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="overflow-y-auto mt-8" style="max-height: 312px;">
+                <div class="flow-root">
+                  <ul role="list" class="-my-6 divide-y divide-gray-200" id="product-list">
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
+              <div class="flex justify-between text-base font-medium text-gray-900">
+                <p>Subtotal</p>
+                <p id="subtotal">$0.00</p>
+              </div>
+              <p class="mt-0.5 text-sm text-gray-500">
+                Gastos de envío e impuestos calculados en el momento de la
+                compra.
+              </p>
+              <div class="mt-6">
+                <a
+                  href="#"
+                  class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                  >Finalizar Compra</a
+                >
+              </div>
+              <div
+                class="mt-6 flex justify-center text-center text-sm text-gray-500"
+              >
+                <p>
+                  o
+                  <button
+                    type="button"
+                    id="continue-shopping"
+                    class="font-medium text-indigo-600 hover:text-indigo-500"
+                  >
+                    Continuar Comprando
+                    <span aria-hidden="true"> &rarr;</span>
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .overflow-y-auto {
+    margin-right: -20px; /* Esto mueve la barra de desplazamiento hacia la derecha */
+    padding-right: 20px; /* Esto compensa el margen negativo y mantiene el contenido lejos de la barra de desplazamiento */
+  }
+  /* Personalizar toda la barra de desplazamiento */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 8px; /* Ancho de la barra de desplazamiento */
+  }
+
+  /* Personalizar la pista de la barra (parte donde se desplaza el thumb) */
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent; /* Color de fondo de la pista */
+    border-radius: 10px; /* Bordes redondeados de la pista */
+  }
+
+  /* Personalizar el thumb de la barra de desplazamiento (la parte que se mueve) */
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background-color: lightgray; /* Color del thumb */
+    border-radius: 10px; /* Bordes redondeados del thumb */
+  }
+
+  /* Opcional: cambiar el estilo del thumb al pasar el mouse sobre él */
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background-color: gray; /* Color cuando el mouse está sobre el thumb */
+  }
+</style>
+<script>
+  function formatPrice(price) {
+    const formatter = new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      currencyDisplay: 'narrowSymbol',
+      minimumFractionDigits: 0,
+    });
+    return formatter.format(price).replace(/[\s\u00A0]COP$/, '').replace('COL$', '').trim();
+  }
+  
+  declare global {
+    interface Window {
+      loadCartProducts: () => void;
+    }
+  }
+
+  // Esta función se llamará para cargar los productos cuando se muestre el carrito de compras.
+  window.loadCartProducts = function() {
+    fetch('http://localhost:3001/products') // Asegúrate de que esta ruta corresponda a tu API de productos.
+      .then(response => response.json())
+      .then(products => {
+        const productList = document.getElementById('product-list');
+        productList.innerHTML = ''; // Limpiar la lista antes de agregar los nuevos elementos.
+
+        let subtotal = 0; // Inicializa el subtotal a 0.
+
+        products.forEach(product => {
+          const li = document.createElement('li');
+          li.className = 'flex py-6';
+          li.innerHTML = `
+            <div class="flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+              <a href="${product.detalles.link}">
+                <img src="${product.detalles.imagen}" alt="${product.nombre}" class="h-full w-full object-cover object-center">
+              </a>
+            </div>
+            <div class="ml-4 flex flex-1 flex-col">
+              <div>
+                <div class="flex justify-between text-base font-medium text-gray-900">
+                  <h3>${product.nombre}</h3>
+                  <p class="ml-4" id="price-${product._id}">${formatPrice(product.detalles.precio)}</p>
+                </div>
+                <p class="mt-1 text-sm text-gray-500">${product.detalles.color}</p>
+                <p class="mt-1 text-sm text-gray-500">${product.detalles.talla}</p>
+              </div>
+              <div class="flex flex-1 items-end justify-between text-sm">
+                <input type="text" style="width: 40px;" class="product-quantity-input" value="${product.cantidad}" min="1" max="${product.stockMaximo}" onchange="validateQuantity(this, ${product.stockMaximo})" data-product-id="${product._id}" />
+                <div class="flex">
+                  <button type="button" class="remove-from-cart-button text-indigo-600 hover:text-indigo-500" data-product-id="${product._id}">
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          productList.appendChild(li);
+          
+          fetchProductStock(product._id)
+          .then(actualStock => {
+            quantityInput.maxLength = actualStock.toString().length;
+            // Establece cualquier otro atributo o evento después de esta operación
+          })
+          .catch(error => {
+            console.error('Error fetching product stock:', error);
+          });
+          
+          // Dentro de tu función loadCartProducts, actualiza los eventos 'input' y 'blur' así:
+          const quantityInput = li.querySelector('.product-quantity-input') as HTMLInputElement;
+          
+          // Evento 'input' para controlar la longitud máxima basada en el stock disponible
+          quantityInput.addEventListener('input', function() {
+            fetchProductStock(product._id)
+              .then(actualStock => {
+                // Establecer la longitud máxima del valor del input basado en la longitud del stock máximo
+                this.maxLength = actualStock.toString().length;
+
+                // A continuación, tu lógica existente para validar el valor del input
+                let inputValue = parseInt(this.value, 10);
+
+                // Si el valor ingresado es numérico y excede el stock, ajustarlo al máximo
+                if (!isNaN(inputValue) && inputValue > actualStock) {
+                  this.value = actualStock.toString();
+                }
+
+                // Si el valor es menor que 1, establece el input a 1
+                if (inputValue < 1) {
+                  this.value = '1';
+                }
+                
+                validateQuantity(this); // Llama a validateQuantity para actualizar la cantidad y el subtotal
+              })
+              .catch(error => {
+                console.error('Error fetching product stock:', error);
+              });
+          });
+
+          // Asegúrate de que esta función solo se aplique al evento 'blur'
+          quantityInput.addEventListener('blur', function() {
+            handleBlurEvent(this);
+          });
+
+          quantityInput.addEventListener('keydown', function(e) {
+            var validKeys = [
+              'Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'Home', 'End', 'ArrowLeft', 'ArrowRight', 'Clear'
+            ];
+            var isNumberKey = (e.key >= '0' && e.key <= '9') || (e.key >= 'Numpad0' && e.key <= 'Numpad9');
+            var isNavigationKey = validKeys.indexOf(e.key) !== -1;
+            if (!isNumberKey && !isNavigationKey) {
+              e.preventDefault();
+            }
+          });
+
+          subtotal += product.detalles.precio * product.cantidad;
+        });
+
+        document.getElementById('subtotal').textContent = formatPrice(subtotal) + ' COP';
+
+        // Adjuntar eventos a los botones después de crearlos.
+        attachRemoveFromCartEvent();
+
+        const productContainer = document.querySelector('.mt-8') as HTMLElement;
+        if (products.length > 2) {
+          productContainer.classList.add('overflow-y-auto');
+          productContainer.style.maxHeight = '310px'; // Establece una altura máxima si es necesario
+        } else {
+          productContainer.classList.remove('overflow-y-auto');
+          productContainer.style.maxHeight = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+  }
+
+  function updateSubtotal() {
+    const quantityInputs = document.querySelectorAll('.product-quantity-input');
+    let newSubtotal = 0;
+    
+    quantityInputs.forEach((element) => {
+      // Aquí estamos asumiendo que element es de hecho un HTMLInputElement.
+      // Usamos 'as HTMLInputElement' para hacer una aserción de tipo.
+      const inputElement = element as HTMLInputElement;
+      const productId = inputElement.dataset.productId; // dataset debería estar disponible ahora
+      const priceElement = document.querySelector(`#price-${productId}`) as HTMLElement; // Asumimos que siempre es un HTMLElement
+
+      // Asegúrate de eliminar tanto el símbolo de moneda como los puntos de mil y cambiar la coma decimal por un punto
+      const price = priceElement ? parseFloat(priceElement.textContent!.replace(/\./g, "").replace(/,/g, ".").replace(/[^0-9.-]+/g, "")) : 0;
+      const quantity = inputElement.value.trim() === '' ? 0 : parseInt(inputElement.value, 10) || 0;
+      
+      newSubtotal += price * quantity;
+    });
+
+    const subtotalElement = document.getElementById('subtotal') as HTMLElement; // Asumimos que es un HTMLElement
+    // Usar formatPrice para formatear el nuevo subtotal
+    subtotalElement.textContent = formatPrice(newSubtotal) + ' COP';
+  }
+
+  function updateProductQuantity(productId, newQuantity) {
+    fetchProductStock(productId)
+      .then(stock => {
+        if (newQuantity > stock) {
+          console.error('La cantidad solicitada excede el stock disponible.');
+          // Aquí podrías, por ejemplo, restablecer el valor del input a la cantidad máxima disponible
+          // o mostrar un mensaje al usuario, etc.
+          return Promise.reject('Cantidad solicitada excede el stock disponible.');
+        }
+
+        // Si la cantidad es menor o igual al stock, procedemos a actualizar.
+        return fetch(`http://localhost:3001/products/${productId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ cantidad: newQuantity })
+        });
+      })
+      .then(response => {
+        if (response && !response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(updatedProduct => {
+        console.log('Producto actualizado con éxito:', updatedProduct);
+        updateSubtotal();
+      })
+      .catch(error => {
+        console.error('Error al actualizar el producto:', error);
+      });
+  }
+
+  function fetchProductStock(productId) {
+    return fetch(`http://localhost:3001/products/${productId}/stock`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error al recuperar el stock del producto: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => data.stock)
+      .catch(error => {
+        console.error('Error en fetchProductStock:', error);
+        throw error;
+      });
+  }
+
+  function handleBlurEvent(inputElement) {
+    if (inputElement.value.trim() === '') {
+        inputElement.value = '1'; // Establece la cantidad mínima si el campo está vacío
+        validateQuantity(inputElement); // Realiza la validación con la cantidad mínima
+    } else {
+        validateQuantity(inputElement); // Realiza la validación con el valor actual
+    }
+  }
+
+  function validateQuantity(inputElement) {
+    const value = parseInt(inputElement.value, 10);
+    
+    fetchProductStock(inputElement.dataset.productId)
+        .then(actualStock => {
+            if (value > actualStock) {
+                inputElement.value = actualStock; // Ajusta el valor al stock actual disponible.
+            }
+            // No es necesario verificar si el valor es menor que 1 aquí, ya que eso se maneja en handleBlurEvent.
+
+            // Actualiza la cantidad del producto si el valor es válido y no excede el stock actual
+            updateProductQuantity(inputElement.dataset.productId, value);
+            updateSubtotal();
+        })
+        .catch(error => {
+            console.error('Error validating product quantity:', error);
+        });
+  }
+
+
+  // Función para adjuntar el evento de eliminar a cada botón
+  function attachRemoveFromCartEvent() {
+    const buttons = document.querySelectorAll('.remove-from-cart-button');
+    buttons.forEach(button => {
+      button.addEventListener('click', function() {
+        removeFromCart(this.getAttribute('data-product-id'));
+      });
+    });
+  }
+
+  // Esta función se llamará cuando se haga clic en el botón de eliminar.
+  function removeFromCart(productId) {
+    console.log(`Intentando eliminar el producto con ID: ${productId}`);
+    fetch(`http://localhost:3001/products/${productId}`, { method: 'DELETE' })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(() => {
+        window.loadCartProducts();
+      })
+      .catch(error => {
+        console.error('Error removing product:', error);
+      });
+  }
+
+  // Llamar a la función loadCartProducts para cargar los productos cuando se inicia la página.
+  window.loadCartProducts();
+</script>

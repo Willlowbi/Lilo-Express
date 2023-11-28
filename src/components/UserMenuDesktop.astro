@@ -1,0 +1,145 @@
+---
+
+---
+
+<div id="user-menu-icon" class="group relative cursor-pointer">
+    <a
+        href="#"
+        id="user-icon-link"
+        class="flex items-center"
+        aria-label="Perfil de Usuario"
+    >
+        <!-- Icono del usuario -->
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="h-6 w-6"
+        >
+            <path
+                stroke-Linecap="round"
+                stroke-Linejoin="round"
+                stroke-Width="2"
+                d="M12 4a4 4 0 100 8 4 4 0 000-8zm0 10c4.28 0 8 1.7 8 4v2H4v-2c0-2.3 3.72-4 8-4z"
+            ></path>
+        </svg>
+    </a>
+    <div
+        id="user-menu-dropdown"
+        class="absolute right-0 px-4 py-2 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-md group-hover:block hidden text-center"
+    >
+        <button
+            id="main-btn"
+            class="w-full text-center font-bold py-2 rounded-md hover:bg-gray-200"
+            style={{ color: "#add8e6" }}
+        >
+            Iniciar sesión
+        </button>
+        <hr class="my-2" />
+        <p id="prompt-text" class="text-center mb-2 text-sm font-bold">
+            ¿NO TIENES CUENTA AÚN?
+        </p>
+        <button
+            id="secondary-btn"
+            class="w-full text-center font-bold py-2 rounded-md text-red-500 hover:bg-gray-200"
+        >
+            Regístrate
+        </button>
+    </div>
+</div>
+
+<script>
+    function checkAuthenticationAndUpdateMenu() {
+        fetch("http://localhost:3001/isAuthenticated", {
+            method: "GET",
+            credentials: "include",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const mainBtn = document.getElementById("main-btn");
+                const promptText = document.getElementById("prompt-text");
+                const secondaryBtn = document.getElementById("secondary-btn");
+                const userIconLink = document.getElementById("user-icon-link");
+
+                if (data.isAuthenticated) {
+                    mainBtn.innerText = "Mi Cuenta";
+                    mainBtn.onclick = () => (window.location.href = "/Profile");
+                    promptText.style.display = "none";
+                    secondaryBtn.innerText = "Cerrar Sessión";
+                    secondaryBtn.onclick = logout;
+
+                    // Redirige al perfil al hacer clic en el icono del usuario
+                    userIconLink.onclick = (e) => {
+                        e.preventDefault();
+                        window.location.href = "/Profile";
+                    };
+                } else {
+                    mainBtn.innerText = "Iniciar sesión";
+                    mainBtn.onclick = () => (window.location.href = "/Login");
+                    promptText.style.display = "block";
+                    secondaryBtn.innerText = "Regístrate";
+                    secondaryBtn.onclick = () =>
+                        (window.location.href = "/Register");
+
+                    // Redirige a iniciar sesión al hacer clic en el icono del usuario
+                    userIconLink.onclick = (e) => {
+                        e.preventDefault();
+                        window.location.href = "/Login";
+                    };
+                }
+            });
+    }
+
+    // Función para cerrar sesión
+    function logout() {
+        fetch("http://localhost:3001/logout", {
+            method: "GET",
+            credentials: "include", // Importante para enviar las cookies
+        }).then(() => {
+            checkAuthenticationAndUpdateMenu();
+            window.location.reload(); // Esta línea recargará la página
+        });
+    }
+
+    // Llamamos a la función cuando el documento se cargue
+    document.addEventListener("DOMContentLoaded", () => {
+        checkAuthenticationAndUpdateMenu();
+
+        let timeout;
+        const delay = 300;
+        const icon = document.getElementById("user-menu-icon");
+        const menu = document.getElementById("user-menu-dropdown");
+
+        if (!icon || !menu) return;
+
+        const showMenu = () => {
+            clearTimeout(timeout);
+            menu.classList.remove("hidden");
+
+            const { right } = icon.getBoundingClientRect();
+            const menuWidth = menu.offsetWidth;
+            const offset = 70;
+
+            if (window.innerWidth - right < menuWidth + offset) {
+                menu.style.right = `-${offset}px`;
+            } else {
+                const shifted = right - icon.offsetWidth / 2 - menuWidth / 2;
+                menu.style.right = `-${
+                    (shifted < offset ? offset : shifted) + offset
+                }px`;
+            }
+        };
+
+        const hideMenu = () => {
+            timeout = setTimeout(() => {
+                menu.classList.add("hidden");
+            }, delay);
+        };
+
+        icon.addEventListener("mouseenter", showMenu);
+        icon.addEventListener("mouseleave", hideMenu);
+        menu.addEventListener("mouseenter", showMenu);
+        menu.addEventListener("mouseleave", hideMenu);
+    });
+</script>

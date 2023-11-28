@@ -1,0 +1,52 @@
+---
+let cartItemCount = 0;
+---
+
+<div class="relative" aria-label="Carrito de Compras">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    class="h-6 w-6"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3 3h18a1 1 0 011 1v1a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1zm0 5h18a1 1 0 011 1v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9a1 1 0 011-1z"
+    ></path>
+  </svg>
+  <span
+    data-testid="cart-item-count"
+    class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center transform translate-x-1/2 -translate-y-1/2"
+  >
+    {cartItemCount}
+  </span>
+</div>
+<script>
+  // Este script se ejecutará en el cliente
+  function fetchCartItemCount() {
+    fetch('http://localhost:3001/cart/count')
+      .then(response => response.json())
+      .then(data => {
+        document.querySelector('[data-testid="cart-item-count"]').textContent = data.count;
+      })
+      .catch(error => {
+        console.error('Error al recuperar el total de productos en el carrito:', error);
+      });
+  }
+
+  // Llamamos a la función para obtener el conteo actual del carrito al cargar la página
+  fetchCartItemCount();
+
+  // Encuesta el servidor cada 0.1 segundos para obtener actualizaciones
+  setInterval(fetchCartItemCount, 100);
+</script>
+
+
+
+
+
+
+
